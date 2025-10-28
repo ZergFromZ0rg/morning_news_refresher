@@ -1,0 +1,26 @@
+{
+  "categories": ["top stories", "global politics", "economy", "technology", "trends"],
+
+
+  "sources": [
+    {
+      "name": "Reuters World",
+      "url": "https://feeds.reuters.com/reuters/worldNews",
+      "categories": ["global", "politics"],
+      "weight": 0.8
+    },
+    {
+      "name": "The Verge Tech",
+      "url": "https://www.theverge.com/rss/index.xml",
+      "categories": ["technology", "trends"]
+    }
+  ],
+
+  "ui": {
+    "theme": "dark",
+    "refreshInterval": 30,
+    "itemsPerCategory":10
+  }
+}
+
+

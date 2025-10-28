@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+  <title>Morning News Refresher</title>
+  
+</head>
+
+
+<body>
+    
+<header class="app-header">
+  <div class="header-top">
+    <h1>🗞️ Morning News Refresher</h1>
+    <button id="open-config" class="config-btn">.config</button>
+  </div>
+
+  <nav class="categories">
+    <button class="category" data-cat="global-politics">Global Politics</button>
+    <button class="category" data-cat="economy">Economy</button>
+    <button class="category active" data-cat="top-stories">Top Stories</button>
+    <button class="category" data-cat="technology">Technology</button>
+    <button class="category" data-cat="trends">Trends</button>
+  </nav>
+</header>
+
+<section id="sites-list"></section>
+
+  <main>
+    <section id="news-list">
+  </main>
+
+  <div id="config-modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content" role="document">
+    <h2 class="modal-title">Config</h2>
+    <p>hello :)</p>
+
+    <div class="modal-actions">
+      <button id="config-cancel" class="btn ghost">Cancel</button>
+      <button id="config-save" class="btn primary">Save</button>
+    </div>
+
+    <button id="config-close" class="modal-x" aria-label="Close">✕</button>
+  </div>
+  </div>
+
+  <script src="script.js?v=dev"></script>
+
+
+
+  <footer>
+    <p>Ad-free solution for daily news curated from your favorite sources.<br>
+       Brought to you free by Zerg from Zorg.
+    </p>
+  </footer>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js"></script>
+
+
+</body>
+</html>
