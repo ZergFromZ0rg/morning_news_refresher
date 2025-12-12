@@ -1,0 +1,151 @@
+
+/* Global reset to keep layout predictable */
+* {
+  box-sizing: border-box;
+}
+
+/* App shell on a dark canvas */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #020617;
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hero masthead wrapper */
+#site-head {
+  min-height: 25vh;
+  padding: clamp(1.5rem, 1vw, 3rem) clamp(1rem, 6vw, 4rem);
+  background: radial-gradient(circle at top, #1d4ed8, #0f172a 70%);
+  text-align: center;
+}
+
+.site-title {
+  margin: 0 auto clamp(1rem, 4vw, 2rem);
+  width: 100%;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: clamp(0.4rem, 2vw, 2rem);
+  color: #f8fafc;
+  display: block;
+  overflow: hidden;
+}
+
+.site-title span {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: clamp(2.5rem, 15vw, 8rem);
+  animation: stretch-title 12s linear infinite;
+}
+
+@keyframes stretch-title {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33%);
+  }
+}
+
+/* Center the news grid stack */
+main {
+  flex: 1;
+  padding: clamp(1rem, 5vw, 3rem);
+  background: #020617;
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive newspaper grid */
+#news-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(0.75rem, 3vw, 1.5rem);
+  width: min(1100px, 100%);
+}
+
+/* Shared card styling */
+.news-piece {
+  padding: clamp(1rem, 4vw, 2rem);
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  line-height: 1.5;
+  font-size: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.news-piece h2 {
+  margin: 0;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.news-piece__meta {
+  margin: 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7dd3fc;
+}
+
+.news-piece__ago {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(248, 250, 252, 0.75);
+}
+
+.news-piece p {
+  margin: 0;
+  color: #cbd5f5;
+}
+
+/* Printed border accent */
+.news-piece::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+/* Feature spreads: biggest tile */
+.news-piece--feature {
+  grid-column: span 2;
+  grid-row: span 2;
+  font-size: 1.05rem;
+}
+
+/* Headline spans two columns */
+.news-piece--headline {
+  grid-column: span 2;
+  grid-row: span 1;
+}
+
+/* Column article */
+.news-piece--column {
+  grid-column: span 1;
+}
+
+/* Quick blurb filler */
+.news-piece--blurb {
+  grid-column: span 1;
+  padding: clamp(0.75rem, 3vw, 1.25rem);
+  font-size: 0.95rem;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: #020617;
+  color: #94a3b8;
+}

@@ -1,100 +1,131 @@
-const articles = {
-  "Top Stories": [
-    { title: "Global Markets Rally", source: "Reuters", time: "2h ago", summary: "Stocks surge worldwide after easing inflation data.", link: "#" },
-    { title: "Election Results Incoming", source: "BBC", time: "3h ago", summary: "Key races remain too close to call as votes are counted.", link: "#" }
-  ],
-  "Technology": [
-    { title: "AI Model Beats Expectations", source: "The Verge", time: "1h ago", summary: "New benchmark scores surpass all prior models.", link: "#" }
-  ],
-  "Economy": [
-    { title: "Oil Prices Drop", source: "Bloomberg", time: "5h ago", summary: "Crude futures decline as demand projections weaken.", link: "#" }
-  ]
-};
-
-
-// TO BE ABLE TO SWITCH CATEGORIES & UPDATE NEWS LIST
-const buttons = document.querySelectorAll('.category');
+const hero = document.querySelector('.hero');
+const yearTarget = document.getElementById('copyright-year');
 const newsList = document.getElementById('news-list');
+const siteTitle = document.querySelector('.site-title');
+const siteTitleText = siteTitle?.querySelector('span');
+const siteTagline = document.getElementById('site-tagline');
 
-buttons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    // highlight clicked button
-    buttons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+// keeps the footer year up to date so the page never looks stale
+function updateYear() {
+  if (yearTarget) {
+    yearTarget.textContent = new Date().getFullYear();
+  }
+}
 
-    // get the category text (matches the keys in our data)
-    const category = btn.textContent.trim();
+updateYear();
 
-    // get articles for that category
-    const items = articles[category] || [];
+// fetches the JSON configuration from the config directory
+async function loadConfig() {
+  try {
+    const response = await fetch('../config/config.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error('[config] failed to load', error);
+    return null;
+  }
+}
 
-    // clear current list
-    newsList.innerHTML = '';
+// determines what size/layout class an article should get based on content
+function classifyArticle(article = {}) {
+  const summaryLength = (article.summary || '').split(/\s+/).filter(Boolean).length;
+  const priority = Number(article.priority) || 1;
 
-    // rebuild new cards
-    if (items.length === 0) {
-      newsList.innerHTML = `<p>No articles found for ${category}.</p>`;
-    } else {
-      items.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'news-card';
-        card.innerHTML = `
-          <h2>${item.title}</h2>
-          <p class="source">${item.source} · ${item.time}</p>
-          <p class="summary">${item.summary}</p>
-          <a href="${item.link}" target="_blank" class="read-more">Read Full Article →</a>
-        `;
-        newsList.appendChild(card);
+  if (priority >= 5 || summaryLength >= 40) return 'feature';
+  if (priority >= 4 || summaryLength >= 25) return 'headline';
+  if (priority >= 3 || summaryLength >= 12) return 'column';
+  return 'blurb';
+}
+
+function collectArticles(sources = []) {
+  const collected = [];
+  sources.forEach(source => {
+    const feeds = source.feeds || [];
+    feeds.forEach(feed => {
+      (feed.articles || []).forEach(article => {
+        collected.push({
+          ...article,
+          source: source.name || 'Unknown source',
+          topic: feed.topic || 'General'
+        });
       });
+    });
+  });
+  return collected;
+}
+
+function formatRelativeTime(publishedAt) {
+  if (!publishedAt) return '';
+  const timestamp = new Date(publishedAt).getTime();
+  if (Number.isNaN(timestamp)) return '';
+  const diffMs = Date.now() - timestamp;
+  const minutes = Math.floor(diffMs / 60000);
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+// empties the list and rebuilds every story with size classes + sorted order
+function renderArticles(articles = []) {
+  if (!newsList) return;
+  newsList.innerHTML = '';
+
+  if (!Array.isArray(articles) || !articles.length) {
+    const empty = document.createElement('p');
+    empty.textContent = 'No articles available.';
+    newsList.appendChild(empty);
+    return;
+  }
+
+  const sorted = [...articles].sort((a, b) => (b.priority || 0) - (a.priority || 0));
+
+  sorted.forEach(article => {
+    const card = document.createElement('article');
+    const title = document.createElement('h2');
+    const meta = document.createElement('p');
+    const summary = document.createElement('p');
+    const time = document.createElement('p');
+
+    title.textContent = article.title || 'Untitled';
+    meta.className = 'news-piece__meta';
+    meta.textContent = `${article.source || 'Unknown source'} • ${article.topic || 'General'}`;
+    summary.textContent = article.summary || '';
+    time.className = 'news-piece__ago';
+    time.textContent = article.uploadedAgo || formatRelativeTime(article.publishedAt);
+
+    const sizeClass = classifyArticle(article);
+    card.classList.add('news-piece', `news-piece--${sizeClass}`);
+
+    card.appendChild(title);
+    card.appendChild(meta);
+    card.appendChild(summary);
+    card.appendChild(time);
+    newsList.appendChild(card);
+  });
+}
+
+// entry point: loads config, updates hero text, and renders the article list
+async function hydrateFromConfig() {
+  const config = await loadConfig();
+  if (!config) return;
+
+  if (config.siteTitle && siteTitle) {
+    siteTitle.setAttribute('aria-label', config.siteTitle);
+    siteTitle.dataset.title = config.siteTitle;
+    if (siteTitleText) {
+      siteTitleText.textContent = `${config.siteTitle} • ${config.siteTitle} • ${config.siteTitle}`;
     }
-  });
-});
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  const active = document.querySelector('.category.active');
-  if (active) active.click(); // triggers your existing handler → fills #news-list
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Elements
-  const openBtn   = document.getElementById('open-config');
-  const modal     = document.getElementById('config-modal');
-  const closeX    = document.getElementById('config-close');
-  const cancelBtn = document.getElementById('config-cancel');
-  const saveBtn   = document.getElementById('config-save');
-
-  function openModal() {
-    modal.classList.add('show');
-    modal.setAttribute('aria-hidden', 'false');
-    console.log('[config] modal opened');
-  }
-  function closeModal() {
-    modal.classList.remove('show');
-    modal.setAttribute('aria-hidden', 'true');
-    console.log('[config] modal closed');
   }
 
-  // Open/close handlers
-  openBtn.addEventListener('click', openModal);
-  closeX.addEventListener('click', closeModal);
-  cancelBtn.addEventListener('click', () => {
-    console.log('[config] cancel clicked'); 
-    closeModal();
-  });
-  saveBtn.addEventListener('click', () => {
-    console.log('[config] save clicked — TODO: handle form values here');
-    closeModal();
-  });
+  if (config.tagline && siteTagline) {
+    siteTagline.textContent = config.tagline;
+  }
 
-  // Click backdrop to close
-  modal.querySelector('.modal-backdrop').addEventListener('click', closeModal);
+  const articles = collectArticles(config.sources || []);
+  renderArticles(articles);
+}
 
-  // Escape key to close
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
-  });
-});
-
-
-
+hydrateFromConfig();
