@@ -1,0 +1,56 @@
+#sum {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.sum-container {
+  display: grid;
+  width: 90%;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.stock-brief {
+    border: 1px solid rgb(61, 106, 255);
+    min-height: 600px;
+    padding: 10px;
+    flex-direction: column;
+    display: flex;
+}
+
+.stock-brief h3 {
+    margin: 0 0 12px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.stock-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+.mascot-image-small {
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
+}
+
+.ai-sum {
+    border: 1px solid rgb(61, 106, 255);
+}
+
+.ai-sum h3 {
+    margin: 0 0 12px;
+    text-align: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.weather-brief {
+    border: 1px solid rgb(61, 106, 255);
+}
